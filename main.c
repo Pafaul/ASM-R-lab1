@@ -13,10 +13,9 @@
 
 // Адрес начала программы DSP-ядра
 extern int Start_DSP;
-extern float InA;
-extern float InB;
-extern int InC;
-extern float OutC;
+extern int ArrayIn[49];
+extern int OutValue;
+extern int ArraySize;
 
 main()
 {
@@ -29,20 +28,9 @@ main()
       PC(0)=((unsigned int)&Start_DSP - 0xb8440000)>>2;//(unsigned int)&PRAM)>>2;
 
 // Пишем в первый сегмент памяти даннных XRAM
-      A0(0)=((unsigned int)&InA - 0xb8400000)>>2;//(unsigned int)&XRAM)>>2;
-      A1(0)=((unsigned int)&InB - 0xb8400000)>>2;
-      A2(0)=((unsigned int)&InC - 0xb8400000)>>2;
-      A3(0)=((unsigned int)&OutC - 0xb8400000)>>2;
 
 
 // записываем значения входных переменных в память DSP-ядра
-      float percents = 1.03;
-      float sum = 10000;
-      int years = 5;
-      InA = percents;
-      InB = sum;
-      InC = years;
-
 
 // Запускаем ядро 0
       DCSR(0) = 0x4000;
@@ -51,7 +39,11 @@ main()
       while( !(QSTR_DSP & (1<<3)) ) ;
 
 // забираем результат
-      sum = OutC;
+      int array[7*7];
+      int i;
+      for (i = 0; i < 7*7; i++)
+        array[i] = ArrayIn[i];
+      int maxElement = OutValue;
 
 // "лишний" оператор для установки контрольной точки, чтобы посмотреть значения переменных
       while (1) ;
